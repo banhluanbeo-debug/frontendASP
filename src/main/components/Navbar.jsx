@@ -9,8 +9,8 @@ export default function Navbar() {
         </Link>
         <div className="flex items-center space-x-6">
           <Link to="/" className="text-gray-700 hover:text-orange-600 font-medium transition-colors">Trang chủ</Link>
-          <Link to="/" className="text-gray-700 hover:text-orange-600 font-medium transition-colors">Thực đơn</Link>
-          <Link to="/" className="text-gray-700 hover:text-orange-600 font-medium transition-colors">Đặt bàn trực tuyến</Link>
+          <Link to="/menu" className="text-gray-700 hover:text-orange-600 font-medium transition-colors">Thực đơn</Link>
+          <Link to="/reservation" className="text-gray-700 hover:text-orange-600 font-medium transition-colors">Đặt bàn trực tuyến</Link>
         </div>
       </div>
     </nav>

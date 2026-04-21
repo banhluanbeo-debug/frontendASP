@@ -2,6 +2,8 @@ import { Link, useLocation } from 'react-router-dom';
 
 export default function Sidebar() {
   const location = useLocation();
+  const adminUser = JSON.parse(localStorage.getItem('adminUser') || '{}');
+  
   const isActive = (path) => location.pathname === path ? 'bg-orange-600 text-white shadow-lg' : 'text-gray-300 hover:bg-gray-800 hover:text-white';
 
   const handleLogout = () => {
@@ -15,7 +17,11 @@ export default function Sidebar() {
         <Link to="/admin/dashboard" className="text-2xl font-black tracking-wider text-orange-500 flex items-center justify-center gap-2">
           <span>👑</span> ADMIN
         </Link>
-        <p className="text-xs text-gray-500 mt-2 tracking-widest uppercase">Quản lý nhà hàng</p>
+        <p className="text-xs text-gray-500 mt-2 tracking-widest uppercase">Hệ thống quản lý</p>
+        <div className="mt-4 p-3 bg-gray-800/50 rounded-xl border border-gray-700/50">
+          <p className="text-[10px] text-gray-500 uppercase font-black mb-1">Đang đăng nhập</p>
+          <p className="text-sm font-bold text-white truncate">{adminUser.fullName || 'Quản trị viên'}</p>
+        </div>
       </div>
 
       <nav className="flex flex-col space-y-2 flex-1">
@@ -29,9 +35,19 @@ export default function Sidebar() {
           Đơn hàng (Order)
         </Link>
 
+        <Link to="/admin/menu-items" className={`px-4 py-3 rounded-xl font-medium transition-all flex items-center gap-3 ${isActive('/admin/menu-items')}`}>
+          <svg className="w-5 h-5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg>
+          Thực đơn (Menu)
+        </Link>
+
         <Link to="/admin/users" className={`px-4 py-3 rounded-xl font-medium transition-all flex items-center gap-3 ${isActive('/admin/users')}`}>
           <svg className="w-5 h-5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
           Khách hàng
+        </Link>
+
+        <Link to="/admin/tables" className={`px-4 py-3 rounded-xl font-medium transition-all flex items-center gap-3 ${isActive('/admin/tables')}`}>
+          <svg className="w-5 h-5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+          Quản lý bàn
         </Link>
       </nav>
 

@@ -7,7 +7,12 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://two123110291-tranvanluan.onrender.com',
+        target: 'http://localhost:10000', // Đổi sang Localhost API của backend ASP.NET
+        changeOrigin: true,
+        secure: false,
+      },
+      '/images': {
+        target: 'http://localhost:10000', // Proxy luôn thư mục ảnh về Backend
         changeOrigin: true,
         secure: false,
       }

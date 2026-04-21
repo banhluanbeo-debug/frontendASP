@@ -1,12 +1,43 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 export default function Home() {
-  const dishes = [
-    { id: 1, name: 'Phở Bò Kobe', category: 'Truyền thống Việt', price: '120.000đ', img: 'https://images.unsplash.com/photo-1582878826629-29b7ad1cb431?w=500&q=80' },
-    { id: 2, name: 'Sushi Đậm Vị Mùa Thu', category: 'Tinh hoa Nhật Bản', price: '350.000đ', img: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=500&q=80' },
-    { id: 3, name: 'Bắc Kinh Quay Giòn', category: 'Hương vị Trung Hoa', price: '450.000đ', img: 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=500&q=80' },
-    { id: 4, name: 'Pad Thái Hải Sản', category: 'Đặc sản Thái Lan', price: '150.000đ', img: 'https://images.unsplash.com/photo-1559314809-0d155014e29e?w=500&q=80' },
-  ];
+  const [categories, setCategories] = useState([]);
+  const [menuItems, setMenuItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [categoriesRes, menuItemsRes] = await Promise.all([
+          fetch('/api/Category'),
+          fetch('/api/Menuitem')
+        ]);
+
+        if (categoriesRes.ok) {
+          const catsData = await categoriesRes.json();
+          setCategories(catsData);
+        }
+
+        if (menuItemsRes.ok) {
+          const itemsData = await menuItemsRes.json();
+          setMenuItems(itemsData);
+        }
+      } catch (error) {
+        console.error("Lỗi khi load dữ liệu API:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // Helper để lấy tên category dựa trên categoryId
+  const getCategoryName = (categoryId) => {
+    const cat = categories.find(c => c.categoryId === categoryId);
+    return cat ? cat.categoryName : 'Danh mục chung';
+  };
 
   return (
     <div>
@@ -24,12 +55,12 @@ export default function Home() {
             Thưởng thức nghệ thuật ẩm thực độc đáo kết hợp giữa hương vị truyền thống và phong cách chế biến hiện đại. Không gian ấm cúng, sang trọng.
           </p>
           <div className="mt-10 flex space-x-4">
-            <button className="px-8 py-4 border border-transparent text-lg font-bold rounded-full text-white bg-orange-600 hover:bg-orange-700 shadow-lg hover:shadow-orange-500/30 transition-all">
+            <Link to="/menu" className="px-8 py-4 border border-transparent text-lg font-bold rounded-full text-white bg-orange-600 hover:bg-orange-700 shadow-lg hover:shadow-orange-500/30 transition-all">
               Xem Bản Thực Đơn
-            </button>
-            <button className="px-8 py-4 border-2 border-white text-lg font-bold rounded-full text-white bg-transparent hover:bg-white hover:text-black shadow-lg transition-all">
+            </Link>
+            <Link to="/reservation" className="px-8 py-4 border-2 border-white text-lg font-bold rounded-full text-white bg-transparent hover:bg-white hover:text-black shadow-lg transition-all">
               Đặt Bàn Ngay
-            </button>
+            </Link>
           </div>
         </div>
       </div>
@@ -40,31 +71,51 @@ export default function Home() {
           <h2 className="text-3xl font-bold text-gray-800">Món ăn nổi bật</h2>
           <p className="text-gray-500 mt-2">Những hương vị không thể bỏ lỡ tại nhà hàng</p>
         </div>
-        <Link to="/" className="text-orange-600 font-semibold hover:text-orange-700 bg-orange-50 px-4 py-2 rounded-lg">Xem tất cả thưc đơn →</Link>
+        <Link to="/menu" className="text-orange-600 font-semibold hover:text-orange-700 bg-orange-50 px-4 py-2 rounded-lg">Xem tất cả thưc đơn →</Link>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-        {dishes.map((item) => (
-          <div key={item.id} className="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all overflow-hidden group cursor-pointer border border-gray-100 hover:-translate-y-1">
-             <div className="h-56 relative overflow-hidden">
-               <img src={item.img} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-               <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-bold text-orange-600 shadow-sm">
-                 ★ Đề cử
-               </div>
-             </div>
-             <div className="p-5">
-               <p className="text-orange-500 text-xs font-bold uppercase tracking-wider mb-2">{item.category}</p>
-               <h3 className="font-bold text-xl text-gray-900 mb-4">{item.name}</h3>
-               <div className="flex justify-between items-center">
-                 <p className="text-gray-900 font-bold text-xl">{item.price}</p>
-                 <button className="bg-orange-50 hover:bg-orange-600 text-orange-600 hover:text-white rounded-full w-10 h-10 flex items-center justify-center transition-colors shadow-sm">
-                   +
-                 </button>
-               </div>
-             </div>
-          </div>
-        ))}
-      </div>
+      {loading ? (
+        <div className="text-center py-12 text-gray-500 font-medium animate-pulse">
+          Đang tải thực đơn từ máy chủ...
+        </div>
+      ) : menuItems.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          {menuItems
+            .filter((item) => item.isAvailable !== false)
+            .slice(0, 4)
+            .map((item, index) => (
+              <Link to={`/menu/${item.itemId}`} key={item.itemId || index} className="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all overflow-hidden group cursor-pointer border border-gray-100 hover:-translate-y-1 block">
+                <div className="h-56 relative overflow-hidden bg-gray-100">
+                  {/* Ưu tiên sử dụng hình ảnh từ API, nếu không có sẽ hiển thị ảnh mặc định */}
+                  <img src={item.imageUrl || item.image || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&q=80"} alt={item.name || item.itemName} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                  {item.isFeatured && (
+                    <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-bold text-orange-600 shadow-sm">
+                      ★ Đề cử
+                    </div>
+                  )}
+                </div>
+                <div className="p-5">
+                  <p className="text-orange-500 text-xs font-bold uppercase tracking-wider mb-2">
+                    {getCategoryName(item.categoryId)}
+                  </p>
+                  <h3 className="font-bold text-xl text-gray-900 mb-4 truncate">{item.name || item.itemName || 'Chưa có tên món'}</h3>
+                  <div className="flex justify-between items-center">
+                    <p className="text-gray-900 font-bold text-xl">
+                      {item.price ? `${item.price.toLocaleString('vi-VN')}đ` : 'Liên hệ'}
+                    </p>
+                    <button className="bg-orange-50 hover:bg-orange-600 text-orange-600 hover:text-white rounded-full w-10 h-10 flex items-center justify-center transition-colors shadow-sm">
+                      +
+                    </button>
+                  </div>
+                </div>
+              </Link>
+            ))}
+        </div>
+      ) : (
+        <div className="text-center py-12 text-gray-500 font-medium">
+          Chưa có món ăn nào được tìm thấy.
+        </div>
+      )}
     </div>
   );
 }
