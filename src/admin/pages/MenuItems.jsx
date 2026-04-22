@@ -18,13 +18,13 @@ export default function MenuItems() {
   });
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
-
+  const API_URL = "https://two123110291-tranvanluan.onrender.com";
   const fetchData = async () => {
     setLoading(true);
     try {
       const [itemsRes, catsRes] = await Promise.all([
-        fetch('/api/MenuItem'),
-        fetch('/api/Category')
+        fetch(`${API_URL}/api/MenuItem`),
+        fetch(`${API_URL}/api/Category`)
       ]);
       if (itemsRes.ok) setItems(await itemsRes.json());
       if (catsRes.ok) setCategories(await catsRes.json());
@@ -85,61 +85,7 @@ export default function MenuItems() {
     }));
   };
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   try {
-  //     console.log([...formData.entries()]);
-  //     const formData = new FormData();
-  //     formData.append('ItemName', currentItem.itemName);
-  //     formData.append('Price', currentItem.price.toString());
-  //     formData.append('CategoryId', currentItem.categoryId.toString());
-  //     formData.append('Description', currentItem.description || '');
-  //     formData.append('IsAvailable', currentItem.isAvailable ? "true" : "false");
 
-  //     if (imageFile) {
-  //       formData.append('image', imageFile);
-  //     }
-  //     // const formData = new FormData();
-  //     // formData.append('ItemName', currentItem.itemName);
-  //     // formData.append('Price', currentItem.price);
-  //     // formData.append('CategoryId', currentItem.categoryId);
-  //     // formData.append('Description', currentItem.description || '');
-  //     // formData.append('IsAvailable', currentItem.isAvailable ? "true" : "false");
-
-  //     // if (modalMode === 'edit') {
-  //     //   // formData.append('ItemId', currentItem.itemId);
-  //     // }
-
-  //     // if (imageFile) {
-  //     //   formData.append('image', imageFile);
-  //     // }
-
-  //     let res;
-  //     if (modalMode === 'create') {
-  //       res = await fetch('/api/MenuItem', {
-  //         method: 'POST',
-  //         body: formData
-  //       });
-  //     } else if (modalMode === 'edit') {
-  //       res = await fetch(`/api/MenuItem/${currentItem.itemId}`, {
-  //         method: 'PUT',
-  //         body: formData
-  //       });
-  //     }
-
-  //     if (res.ok) {
-  //       setIsModalOpen(false);
-  //       fetchData();
-  //     } else {
-  //       const errorText = await res.text();
-  //       console.error('Lỗi 400 (Validation) từ Backend:', errorText);
-  //       alert('Có lỗi xử lý dữ liệu từ Backend:\n' + errorText);
-  //     }
-  //   } catch (error) {
-  //     console.error(error);
-  //     alert('Lỗi kết nối máy chủ');
-  //   }
-  // };
 
 
   const handleSubmit = async (e) => {
@@ -184,12 +130,12 @@ export default function MenuItems() {
       let res;
 
       if (modalMode === 'create') {
-        res = await fetch('/api/MenuItem', {
+        res = await fetch(`${API_URL}/api/MenuItem`, {
           method: 'POST',
           body: formData
         });
       } else {
-        res = await fetch(`/api/MenuItem/${currentItem.itemId}`, {
+        res = await fetch(`${API_URL}/api/MenuItem/${currentItem.itemId}`, {
           method: 'PUT',
           body: formData
         });
@@ -216,7 +162,7 @@ export default function MenuItems() {
   const handleDelete = async (id) => {
     if (window.confirm('Bạn có chắc chắn muốn xóa món này không?')) {
       try {
-        const res = await fetch(`/api/MenuItem/${id}`, { method: 'DELETE' });
+        const res = await fetch(`${API_URL}/api/MenuItem/${id}`, { method: 'DELETE' });
         if (res.ok) {
           fetchData();
         } else {

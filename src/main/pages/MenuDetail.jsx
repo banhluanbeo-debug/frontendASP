@@ -9,10 +9,11 @@ export default function MenuDetail() {
   const [quantity, setQuantity] = useState(1);
   const [ordering, setOrdering] = useState(false);
   const { tableId, id } = useParams();
+  const API_URL = "https://two123110291-tranvanluan.onrender.com";
   useEffect(() => {
     const fetchItem = async () => {
       try {
-        const res = await fetch(`/api/MenuItem/${id}`);
+        const res = await fetch(`${API_URL}/api/MenuItem/${id}`);
         if (res.ok) {
           const data = await res.json();
           setItem(data);
@@ -32,8 +33,7 @@ export default function MenuDetail() {
     if (!item) return;
     setOrdering(true);
     try {
-      const res = await fetch(
-        `/api/table/${tableId}/order?itemId=${item.itemId || item.id}&qty=${quantity}`,
+      const res = await fetch(`${API_URL}/api/table/${tableId}/order?itemId=${item.itemId || item.id}&qty=${quantity}`,
         { method: "POST" }
       );
       if (res.ok) {
@@ -92,10 +92,17 @@ export default function MenuDetail() {
 
         {/* Hình ảnh (Trái) */}
         <div className="lg:w-1/2 relative bg-gray-50 min-h-[400px]">
-          <img
+          {/* <img
             src={item.imageUrl || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=1000&q=80"}
             alt={item.itemName}
             className={`w-full h-full object-cover absolute inset-0 transition-opacity duration-700 ${!item.isAvailable ? 'grayscale opacity-70' : ''}`}
+          /> */}
+          <img
+            src={
+              item.imageUrl
+                ? `${API_URL}${item.imageUrl}`
+                : "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=1000&q=80"
+            }
           />
           {!item.isAvailable && (
             <div className="absolute inset-0 bg-black/50 backdrop-blur-[3px] flex items-center justify-center">

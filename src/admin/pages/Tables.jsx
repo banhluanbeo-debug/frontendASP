@@ -6,13 +6,13 @@ export default function Tables() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingTable, setEditingTable] = useState(null);
   const [formData, setFormData] = useState({ tableCode: '', capacity: 4, status: 'Empty' });
-
+  const API_URL = "https://two123110291-tranvanluan.onrender.com";
   const fetchTables = async () => {
     try {
       setLoading(true);
       const [tableRes, orderRes] = await Promise.all([
-        fetch(`/api/Table?t=${new Date().getTime()}`),
-        fetch(`/api/Order?t=${new Date().getTime()}`)
+        fetch(`${API_URL}/api/Table?t=${new Date().getTime()}`),
+        fetch(`${API_URL}/api/Order?t=${new Date().getTime()}`)
       ]);
 
       if (tableRes.ok && orderRes.ok) {
@@ -67,7 +67,7 @@ export default function Tables() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const url = editingTable ? `/api/Table/${editingTable.tableId}` : '/api/Table';
+    const url = editingTable ? `${API_URL}/api/Table/${editingTable.tableId}` : `${API_URL}/api/Table`;
     const method = editingTable ? 'PUT' : 'POST';
 
     // Nếu là PUT, cần kèm theo TableId trong body nếu API yêu cầu
@@ -93,37 +93,25 @@ export default function Tables() {
   const handleDelete = async (id) => {
     if (!window.confirm("Bạn có chắc chắn muốn xóa bàn này?")) return;
     try {
-      const res = await fetch(`/api/Table/${id}`, { method: 'DELETE' });
+      const res = await fetch(`${API_URL}/api/Table/${id}`, { method: 'DELETE' });
       if (res.ok) fetchTables();
     } catch (error) {
       console.error("Lỗi khi xóa bàn:", error);
     }
   };
 
-  // const handleResetTable = async (table) => {
-  //   if (!window.confirm(`Xác nhận reset bàn ${table.tableCode} về trạng thái trống?`)) return;
-  //   try {
-  //     const res = await fetch(`/api/Table/${table.tableId}`, {
-  //       method: 'PUT',
-  //       headers: { 'Content-Type': 'application/json' },
-  //       body: JSON.stringify({ ...table, status: 'Empty', currentOrderId: null })
-  //     });
-  //     if (res.ok) fetchTables();
-  //   } catch (error) {
-  //     console.error("Lỗi khi reset bàn:", error);
-  //   }
-  // };
+
   const handleResetTable = async (table) => {
     if (!window.confirm(`Reset bàn ${table.tableCode}?`)) return;
 
     try {
       // 🧨 QUAN TRỌNG: đóng order trước
-      await fetch(`/api/Table/${table.tableId}/close-order`, {
+      await fetch(`${API_URL}/api/Table/${table.tableId}/close-order`, {
         method: 'PUT'
       });
 
       // 🪑 rồi mới reset bàn
-      await fetch(`/api/Table/${table.tableId}`, {
+      await fetch(`${API_URL}/api/Table/${table.tableId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...table, status: 'Empty' })

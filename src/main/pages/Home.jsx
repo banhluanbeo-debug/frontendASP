@@ -5,13 +5,14 @@ export default function Home() {
   const [categories, setCategories] = useState([]);
   const [menuItems, setMenuItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const API_URL = "https://two123110291-tranvanluan.onrender.com";
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [categoriesRes, menuItemsRes] = await Promise.all([
-          fetch('/api/Category'),
-          fetch('/api/MenuItem')
+          fetch(`${API_URL}/api/Category`),
+          fetch(`${API_URL}/api/MenuItem`)
         ]);
 
         if (categoriesRes.ok) {
@@ -87,7 +88,18 @@ export default function Home() {
               <Link to={`/menu/${item.itemId}`} key={item.itemId || index} className="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all overflow-hidden group cursor-pointer border border-gray-100 hover:-translate-y-1 block">
                 <div className="h-56 relative overflow-hidden bg-gray-100">
                   {/* Ưu tiên sử dụng hình ảnh từ API, nếu không có sẽ hiển thị ảnh mặc định */}
-                  <img src={item.imageUrl || item.image || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&q=80"} alt={item.name || item.itemName} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                  {/* <img src={item.imageUrl || item.image || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&q=80"} alt={item.name || item.itemName} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" /> */}
+
+                  <img
+                    src={
+                      item.imageUrl
+                        ? `${API_URL}${item.imageUrl}`
+                        : item.image || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&q=80"
+                    }
+                    alt={item.name || item.itemName}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                  
                   {item.isFeatured && (
                     <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-bold text-orange-600 shadow-sm">
                       ★ Đề cử

@@ -4,11 +4,12 @@ export default function Users() {
   const [customers, setCustomers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
+  const API_URL = "https://two123110291-tranvanluan.onrender.com";
 
   const fetchData = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`/api/Order?t=${new Date().getTime()}`);
+      const res = await fetch(`${API_URL}/api/Order?t=${new Date().getTime()}`);
       if (res.ok) {
         const orderData = await res.json();
         

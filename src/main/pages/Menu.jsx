@@ -10,12 +10,13 @@ export default function Menu() {
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState(null);
   const navigate = useNavigate();
+  const API_URL = "https://two123110291-tranvanluan.onrender.com";
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [categoriesRes, menuItemsRes] = await Promise.all([
-          fetch('/api/Category'),
-          fetch('/api/MenuItem')
+          fetch(`${API_URL}/api/Category`),
+          fetch(`${API_URL}/api/MenuItem`)
         ]);
         if (categoriesRes.ok) setCategories(await categoriesRes.json());
         if (menuItemsRes.ok) setMenuItems(await menuItemsRes.json());
@@ -30,7 +31,7 @@ export default function Menu() {
   useEffect(() => {
     if (!tableId) return;
 
-    fetch(`/api/Table/${tableId}`)
+    fetch(`${API_URL}/api/Table/${tableId}`)
       .then(res => {
         if (!res.ok) throw new Error("Invalid table");
         return res.json();
@@ -96,8 +97,18 @@ export default function Menu() {
                   } key={item.itemId || index}
                   className={`bg-white rounded-2xl shadow-sm transition-all overflow-hidden border border-gray-100 block ${!item.isAvailable ? 'opacity-90 cursor-not-allowed' : 'cursor-pointer hover:shadow-xl group hover:-translate-y-1'}`}
                 >                  <div className="h-56 relative overflow-hidden bg-gray-100">
-                    <img
+                    {/* <img
                       src={item.imageUrl || item.image || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&q=80"}
+                      alt={item.itemName}
+                      className={`w-full h-full object-cover transition-transform duration-500 ${!item.isAvailable ? 'grayscale opacity-60' : 'group-hover:scale-110'}`}
+                    /> */}
+
+                    <img
+                      src={
+                        item.imageUrl
+                          ? `${API_URL}${item.imageUrl}`
+                          : item.image || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&q=80"
+                      }
                       alt={item.itemName}
                       className={`w-full h-full object-cover transition-transform duration-500 ${!item.isAvailable ? 'grayscale opacity-60' : 'group-hover:scale-110'}`}
                     />

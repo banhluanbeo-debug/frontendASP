@@ -7,6 +7,7 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const API_URL = "https://two123110291-tranvanluan.onrender.com";
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -15,9 +16,9 @@ export default function Login() {
 
     try {
       // Gọi qua Proxy để qua mặt CORS bảo mật của trình duyệt
-      const res = await fetch('/api/User');
+      const res = await fetch(`${API_URL}/api/User`);
       const users = await res.json();
-      
+
       // Tìm tài khoản trùng khớp fullName và passwordHash
       const foundUser = users.find(
         (u) => u.fullName === username && u.passwordHash === password
@@ -53,7 +54,7 @@ export default function Login() {
           <h2 className="text-2xl font-bold text-gray-800 tracking-tight">Admin Portal</h2>
           <p className="text-gray-500 mt-2 font-medium">Hệ thống quản lý nhà hàng</p>
         </div>
-        
+
         {error && (
           <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm font-medium mb-4 border border-red-200 text-center">
             {error}
@@ -63,8 +64,8 @@ export default function Login() {
         <form onSubmit={handleLogin} className="space-y-6">
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-2">Tên đăng nhập (fullName)</label>
-            <input 
-              type="text" 
+            <input
+              type="text"
               required
               value={username}
               onChange={(e) => setUsername(e.target.value)}
@@ -72,11 +73,11 @@ export default function Login() {
               placeholder="VD: admin"
             />
           </div>
-          
+
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-2">Mật khẩu</label>
-            <input 
-              type="password" 
+            <input
+              type="password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -84,9 +85,9 @@ export default function Login() {
               placeholder="••••••••"
             />
           </div>
-          
-          <button 
-            type="submit" 
+
+          <button
+            type="submit"
             disabled={isLoading}
             className="w-full bg-gray-900 hover:bg-black text-white font-bold py-3.5 px-4 rounded-xl transition-all shadow-md focus:ring-4 focus:ring-gray-400 mt-6 disabled:opacity-50"
           >

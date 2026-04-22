@@ -9,13 +9,14 @@ export default function Dashboard() {
     allTimeRevenue: 0
   });
   const [loading, setLoading] = useState(true);
+  const API_URL = "https://two123110291-tranvanluan.onrender.com";
 
   const fetchData = async () => {
     try {
       setLoading(true);
       const [orderRes, tableRes] = await Promise.all([
-        fetch(`/api/Order?t=${new Date().getTime()}`),
-        fetch(`/api/Table?t=${new Date().getTime()}`)
+        fetch(`${API_URL}/api/Order?t=${new Date().getTime()}`),
+        fetch(`${API_URL}/api/Table?t=${new Date().getTime()}`)
       ]);
 
       if (orderRes.ok && tableRes.ok) {
@@ -24,7 +25,7 @@ export default function Dashboard() {
 
         // Lấy ngày hôm nay định dạng YYYY-MM-DD
         const today = new Date().toLocaleDateString('en-CA');
-        
+
         let tOrders = 0;
         let tRevenue = 0;
         let aRevenue = 0;
@@ -33,11 +34,11 @@ export default function Dashboard() {
           const status = o.status ?? o.Status;
           const subtotal = o.subtotal ?? o.Subtotal ?? 0;
           const dateFull = o.paidAt || o.PaidAt || o.createdAt || o.CreatedAt;
-          
+
           // Chỉ tính các đơn đã thanh toán (status 2 = Closed)
           if (status === 2 || status === "Closed") {
             aRevenue += subtotal;
-            
+
             if (dateFull && dateFull.split('T')[0] === today) {
               tOrders += 1;
               tRevenue += subtotal;
@@ -67,16 +68,16 @@ export default function Dashboard() {
   }, []);
 
   const formatCurrency = (val) => {
-    return new Intl.NumberFormat('vi-VN', { 
-      style: 'currency', 
+    return new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
       currency: 'VND',
-      maximumFractionDigits: 0 
+      maximumFractionDigits: 0
     }).format(val);
   };
 
   // Tính % công suất bàn
-  const tableCapacity = stats.totalTables > 0 
-    ? Math.round((stats.activeTables / stats.totalTables) * 100) 
+  const tableCapacity = stats.totalTables > 0
+    ? Math.round((stats.activeTables / stats.totalTables) * 100)
     : 0;
 
   return (
@@ -86,7 +87,7 @@ export default function Dashboard() {
           <h2 className="text-3xl font-black text-gray-800 tracking-tight">Báo cáo Hoạt động</h2>
           <p className="text-gray-400 font-bold uppercase text-[10px] tracking-widest mt-1">Dữ liệu thời gian thực</p>
         </div>
-        <button 
+        <button
           onClick={fetchData}
           className="p-3 bg-gray-50 text-gray-400 hover:text-orange-600 hover:bg-orange-50 rounded-2xl transition-all"
           title="Làm mới dữ liệu"
@@ -125,8 +126,8 @@ export default function Dashboard() {
             </div>
             <div className="mt-6 flex flex-col gap-1">
               <div className="w-full bg-white/10 h-2 rounded-full overflow-hidden">
-                <div 
-                  className="bg-white h-full transition-all duration-1000" 
+                <div
+                  className="bg-white h-full transition-all duration-1000"
                   style={{ width: `${tableCapacity}%` }}
                 ></div>
               </div>

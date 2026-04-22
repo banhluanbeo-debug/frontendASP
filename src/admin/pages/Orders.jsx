@@ -5,14 +5,14 @@ export default function Orders() {
   const [loading, setLoading] = useState(true);
 
   const [selectedIds, setSelectedIds] = useState([]);
-
+  const API_URL = "https://two123110291-tranvanluan.onrender.com";
   const fetchData = async () => {
     try {
       setLoading(true);
       // Fetch cả Order và Table để lấy tên bàn
       const [orderRes, tableRes] = await Promise.all([
-        fetch(`/api/Order?t=${new Date().getTime()}`),
-        fetch(`/api/Table?t=${new Date().getTime()}`)
+        fetch(`${API_URL}/api/Order?t=${new Date().getTime()}`),
+        fetch(`${API_URL}/api/Table?t=${new Date().getTime()}`)
       ]);
 
       if (orderRes.ok && tableRes.ok) {
@@ -24,10 +24,10 @@ export default function Orders() {
 
         // Lọc linh hoạt hơn: Theo log thực tế, status của đơn hoàn tất là 2
         const paidOrders = orderData
-          .filter(o => 
-            o.status === 2 || 
-            o.status === "Closed" || 
-            o.Status === 2 || 
+          .filter(o =>
+            o.status === 2 ||
+            o.status === "Closed" ||
+            o.Status === 2 ||
             o.Status === "Closed"
           )
           .map(order => {
@@ -68,14 +68,14 @@ export default function Orders() {
   const formatDate = (dateString) => {
     if (!dateString) return "---";
     const date = new Date(dateString);
-    return date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) + ' - ' + 
-           date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    return date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) + ' - ' +
+      date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
   };
 
   const handleDeleteOrder = async (id) => {
     if (!window.confirm(`Bạn có chắc chắn muốn xóa hóa đơn #ORD-${id}?`)) return;
     try {
-      const res = await fetch(`/api/Order/${id}`, {
+      const res = await fetch(`${API_URL}/api/Order/${id}`, {
         method: 'DELETE',
       });
       if (res.ok) {
@@ -112,7 +112,7 @@ export default function Orders() {
       setLoading(true);
       // Gọi xóa từng cái song song
       await Promise.all(selectedIds.map(id =>
-        fetch(`/api/Order/${id}`, { method: 'DELETE' })
+        fetch(`${API_URL}/api/Order/${id}`, { method: 'DELETE' })
       ));
 
       setSelectedIds([]);

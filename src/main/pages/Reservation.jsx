@@ -19,13 +19,13 @@ export default function Reservation() {
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [paymentTotal, setPaymentTotal] = useState(0);
-
+  const API_URL = "https://two123110291-tranvanluan.onrender.com";
   const fetchTables = async () => {
     try {
       setLoading(true);
       const [tableRes, orderRes] = await Promise.all([
-        fetch(`/api/Table?t=${new Date().getTime()}`),
-        fetch(`/api/Order?t=${new Date().getTime()}`)
+        fetch(`${API_URL}/api/Table?t=${new Date().getTime()}`),
+        fetch(`${API_URL}/api/Order?t=${new Date().getTime()}`)
       ]);
       if (tableRes.ok && orderRes.ok) {
         const tableData = await tableRes.json();
@@ -73,8 +73,11 @@ export default function Reservation() {
     try {
       setBookingLoading(true);
       const res = await fetch(
-        `/api/Order/by-table/${selectedTable.tableId}?customerName=${encodeURIComponent(customerName)}&numberOfPeople=${numPeople}`,
-        { method: 'POST', headers: { 'Content-Type': 'application/json' } }
+        `${API_URL}/api/Order/by-table/${selectedTable.tableId}?customerName=${encodeURIComponent(customerName)}&numberOfPeople=${numPeople}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        }
       );
       if (res.ok) {
         await fetchTables();
@@ -99,7 +102,7 @@ export default function Reservation() {
     setPaymentSuccess(false);
     setPaymentLoading(false);
     try {
-      const res = await fetch(`/api/table/${table.tableId}/orders`);
+      const res = await fetch(`${API_URL}/api/table/${table.tableId}/orders`);
       const data = await res.json();
       setPaymentOrders(data);
     } catch (error) {
@@ -111,12 +114,17 @@ export default function Reservation() {
   // Gọi API thanh toán
   const handleConfirmPayment = async () => {
     if (!paymentTable) return;
+
     try {
       setPaymentLoading(true);
-      const res = await fetch(`/api/Order/pay-by-table/${paymentTable.tableId}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
-      });
+
+      const res = await fetch(
+        `${API_URL}/api/Order/pay-by-table/${paymentTable.tableId}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        }
+      );
       if (res.ok) {
         const data = await res.json();
         setPaymentTotal(data.total);
