@@ -12,7 +12,7 @@ export default function MenuDetail() {
   useEffect(() => {
     const fetchItem = async () => {
       try {
-        const res = await fetch(`/api/Menuitem/${id}`);
+        const res = await fetch(`/api/MenuItem/${id}`);
         if (res.ok) {
           const data = await res.json();
           setItem(data);

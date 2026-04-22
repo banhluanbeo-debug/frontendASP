@@ -7,14 +7,14 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:10000', // Đổi sang Localhost API của backend ASP.NET
+        target: 'https://two123110291-tranvanluan.onrender.com',
         changeOrigin: true,
-        secure: false,
+        secure: true,
       },
       '/images': {
-        target: 'http://localhost:10000', // Proxy luôn thư mục ảnh về Backend
+        target: 'https://two123110291-tranvanluan.onrender.com',
         changeOrigin: true,
-        secure: false,
+        secure: true,
       }
     }
   }

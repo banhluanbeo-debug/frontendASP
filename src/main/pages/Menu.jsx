@@ -15,7 +15,7 @@ export default function Menu() {
       try {
         const [categoriesRes, menuItemsRes] = await Promise.all([
           fetch('/api/Category'),
-          fetch('/api/Menuitem')
+          fetch('/api/MenuItem')
         ]);
         if (categoriesRes.ok) setCategories(await categoriesRes.json());
         if (menuItemsRes.ok) setMenuItems(await menuItemsRes.json());

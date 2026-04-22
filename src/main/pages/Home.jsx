@@ -11,7 +11,7 @@ export default function Home() {
       try {
         const [categoriesRes, menuItemsRes] = await Promise.all([
           fetch('/api/Category'),
-          fetch('/api/Menuitem')
+          fetch('/api/MenuItem')
         ]);
 
         if (categoriesRes.ok) {

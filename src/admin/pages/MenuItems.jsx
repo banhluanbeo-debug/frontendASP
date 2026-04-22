@@ -23,7 +23,7 @@ export default function MenuItems() {
     setLoading(true);
     try {
       const [itemsRes, catsRes] = await Promise.all([
-        fetch('/api/Menuitem'),
+        fetch('/api/MenuItem'),
         fetch('/api/Category')
       ]);
       if (itemsRes.ok) setItems(await itemsRes.json());
@@ -85,55 +85,138 @@ export default function MenuItems() {
     }));
   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     console.log([...formData.entries()]);
+  //     const formData = new FormData();
+  //     formData.append('ItemName', currentItem.itemName);
+  //     formData.append('Price', currentItem.price.toString());
+  //     formData.append('CategoryId', currentItem.categoryId.toString());
+  //     formData.append('Description', currentItem.description || '');
+  //     formData.append('IsAvailable', currentItem.isAvailable ? "true" : "false");
+
+  //     if (imageFile) {
+  //       formData.append('image', imageFile);
+  //     }
+  //     // const formData = new FormData();
+  //     // formData.append('ItemName', currentItem.itemName);
+  //     // formData.append('Price', currentItem.price);
+  //     // formData.append('CategoryId', currentItem.categoryId);
+  //     // formData.append('Description', currentItem.description || '');
+  //     // formData.append('IsAvailable', currentItem.isAvailable ? "true" : "false");
+
+  //     // if (modalMode === 'edit') {
+  //     //   // formData.append('ItemId', currentItem.itemId);
+  //     // }
+
+  //     // if (imageFile) {
+  //     //   formData.append('image', imageFile);
+  //     // }
+
+  //     let res;
+  //     if (modalMode === 'create') {
+  //       res = await fetch('/api/MenuItem', {
+  //         method: 'POST',
+  //         body: formData
+  //       });
+  //     } else if (modalMode === 'edit') {
+  //       res = await fetch(`/api/MenuItem/${currentItem.itemId}`, {
+  //         method: 'PUT',
+  //         body: formData
+  //       });
+  //     }
+
+  //     if (res.ok) {
+  //       setIsModalOpen(false);
+  //       fetchData();
+  //     } else {
+  //       const errorText = await res.text();
+  //       console.error('Lỗi 400 (Validation) từ Backend:', errorText);
+  //       alert('Có lỗi xử lý dữ liệu từ Backend:\n' + errorText);
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //     alert('Lỗi kết nối máy chủ');
+  //   }
+  // };
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
       const formData = new FormData();
-      formData.append('ItemName', currentItem.itemName);
-      formData.append('Price', currentItem.price);
-      formData.append('CategoryId', currentItem.categoryId);
-      formData.append('Description', currentItem.description ? currentItem.description : ' ');
-      formData.append('IsAvailable', currentItem.isAvailable);
 
-      if (modalMode === 'edit') {
-        formData.append('ItemId', currentItem.itemId);
+      // 🔥 Validate trước khi gửi
+      if (!currentItem.itemName) {
+        alert("Thiếu tên món");
+        return;
       }
+
+      if (!currentItem.categoryId) {
+        alert("Chưa chọn danh mục 😤");
+        return;
+      }
+
+      if (!currentItem.price || isNaN(currentItem.price)) {
+        alert("Giá không hợp lệ");
+        return;
+      }
+
+      // 🔥 Append dữ liệu
+      formData.append('ItemName', currentItem.itemName);
+      formData.append('Price', String(currentItem.price));
+      formData.append('CategoryId', String(currentItem.categoryId));
+      formData.append('Description', currentItem.description || '');
+      formData.append('IsAvailable', currentItem.isAvailable ? "true" : "false");
 
       if (imageFile) {
         formData.append('image', imageFile);
       }
 
+      // 🔥 LOG để debug
+      console.log("==== FORM DATA ====");
+      for (let pair of formData.entries()) {
+        console.log(pair[0] + ": ", pair[1]);
+      }
+
       let res;
+
       if (modalMode === 'create') {
-        res = await fetch('/api/Menuitem', {
+        res = await fetch('/api/MenuItem', {
           method: 'POST',
           body: formData
         });
-      } else if (modalMode === 'edit') {
-        res = await fetch(`/api/Menuitem/${currentItem.itemId}`, {
+      } else {
+        res = await fetch(`/api/MenuItem/${currentItem.itemId}`, {
           method: 'PUT',
           body: formData
         });
       }
-      
+
+      // 🔥 LOG response
+      console.log("STATUS:", res.status);
+
       if (res.ok) {
+        console.log("SUCCESS ✅");
         setIsModalOpen(false);
         fetchData();
       } else {
         const errorText = await res.text();
-        console.error('Lỗi 400 (Validation) từ Backend:', errorText);
-        alert('Có lỗi xử lý dữ liệu từ Backend:\n' + errorText);
+        console.error("BACKEND ERROR ❌:", errorText);
+        alert("Backend lỗi:\n" + errorText);
       }
+
     } catch (error) {
-      console.error(error);
-      alert('Lỗi kết nối máy chủ');
+      console.error("FETCH ERROR ❌:", error);
+      alert("Lỗi kết nối server");
     }
   };
-
   const handleDelete = async (id) => {
     if (window.confirm('Bạn có chắc chắn muốn xóa món này không?')) {
       try {
-        const res = await fetch(`/api/Menuitem/${id}`, { method: 'DELETE' });
+        const res = await fetch(`/api/MenuItem/${id}`, { method: 'DELETE' });
         if (res.ok) {
           fetchData();
         } else {
@@ -152,11 +235,11 @@ export default function MenuItems() {
           <h1 className="text-3xl font-bold tracking-tight text-gray-900 border-b-4 border-orange-500 inline-block pb-1">Quản lý Thực Đơn</h1>
           <p className="text-gray-500 mt-2">Xem, thêm, sửa, xóa các món ăn trong nhà hàng</p>
         </div>
-        <button 
+        <button
           onClick={() => handleOpenModal('create')}
           className="bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition-all flex items-center gap-2"
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"/></svg>
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg>
           Thêm Món Mới
         </button>
       </div>
@@ -189,8 +272,11 @@ export default function MenuItems() {
                     <td className="p-4">
                       <div className="w-16 h-16 rounded-xl overflow-hidden shadow-sm bg-gray-100 border border-gray-200">
                         {item.imageUrl ? (
-                          <img src={item.imageUrl} alt={item.itemName} className="w-full h-full object-cover" />
-                        ) : (
+                          <img
+                            src={`https://two123110291-tranvanluan.onrender.com${item.imageUrl}`}
+                            alt={item.itemName}
+                            className="w-full h-full object-cover"
+                          />) : (
                           <div className="w-full h-full flex items-center justify-center text-xs text-gray-400">Trống</div>
                         )}
                       </div>
@@ -248,12 +334,12 @@ export default function MenuItems() {
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
-            
+
             <form onSubmit={handleSubmit} className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div className="col-span-2">
                   <label className="block text-sm font-bold text-gray-700 mb-2">Tên món ăn <span className="text-red-500">*</span></label>
-                  <input 
+                  <input
                     type="text" name="itemName" required disabled={modalMode === 'view'}
                     value={currentItem.itemName} onChange={handleChange}
                     className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:bg-white focus:ring-2 focus:ring-orange-500 outline-none transition-all"
@@ -263,7 +349,7 @@ export default function MenuItems() {
 
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-2">Giá bán (VNĐ) <span className="text-red-500">*</span></label>
-                  <input 
+                  <input
                     type="number" name="price" required min="0" disabled={modalMode === 'view'}
                     value={currentItem.price} onChange={handleChange}
                     className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:bg-white focus:ring-2 focus:ring-orange-500 outline-none transition-all"
@@ -272,7 +358,7 @@ export default function MenuItems() {
 
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-2">Danh mục <span className="text-red-500">*</span></label>
-                  <select 
+                  <select
                     name="categoryId" required disabled={modalMode === 'view'}
                     value={currentItem.categoryId} onChange={handleChange}
                     className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:bg-white focus:ring-2 focus:ring-orange-500 outline-none transition-all"
@@ -286,7 +372,7 @@ export default function MenuItems() {
 
                 <div className="col-span-2">
                   <label className="block text-sm font-bold text-gray-700 mb-2">Mô tả chi tiết món ăn</label>
-                  <textarea 
+                  <textarea
                     name="description" rows="3" disabled={modalMode === 'view'}
                     value={currentItem.description || ''} onChange={handleChange}
                     className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:bg-white focus:ring-2 focus:ring-orange-500 outline-none transition-all resize-none"
@@ -296,7 +382,7 @@ export default function MenuItems() {
 
                 <div className="col-span-2">
                   <label className="block text-sm font-bold text-gray-700 mb-2">Tải ảnh lên</label>
-                  <input 
+                  <input
                     type="file" accept="image/*" disabled={modalMode === 'view'}
                     onChange={handleImageChange}
                     className="w-full px-4 py-2 rounded-xl bg-gray-50 border border-gray-200 focus:bg-white focus:ring-2 focus:ring-orange-500 outline-none transition-all file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100"
@@ -309,7 +395,7 @@ export default function MenuItems() {
                 </div>
 
                 <div className="col-span-2 flex items-center p-4 bg-gray-50 rounded-xl border border-gray-200">
-                  <input 
+                  <input
                     type="checkbox" name="isAvailable" id="isAvailable" disabled={modalMode === 'view'}
                     checked={currentItem.isAvailable} onChange={handleChange}
                     className="w-5 h-5 text-orange-600 rounded focus:ring-orange-500 border-gray-300"
