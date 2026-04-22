@@ -377,6 +377,12 @@ export default function Reservation() {
                   {paymentTable.customerName && (
                     <p className="text-gray-400 text-sm">Khách: {paymentTable.customerName}</p>
                   )}
+                  {qrImage && (
+                    <div className="mt-4 text-center">
+                      <p className="text-xs text-gray-400 mb-2">Quét để gọi thêm</p>
+                      <img src={qrImage} className="mx-auto w-28" />
+                    </div>
+                  )}
                 </div>
 
                 <div className="p-8">
