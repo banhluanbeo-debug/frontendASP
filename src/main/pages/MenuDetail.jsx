@@ -1,7 +1,6 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useLocation, Link } from "react-router-dom";
-import { useParams, useLocation } from "react-router-dom";
 
 export default function MenuDetail() {
   // const { id } = useParams();
@@ -10,11 +9,10 @@ export default function MenuDetail() {
   const [quantity, setQuantity] = useState(1);
   const [ordering, setOrdering] = useState(false);
   const { tableId, id } = useParams();
-  const { tableId } = useParams();
   const location = useLocation();
 
   const query = new URLSearchParams(location.search);
-  const customerName = query.get("name");
+  const customerName = query.get("name") || "";
   const API_URL = "https://two123110291-tranvanluan.onrender.com";
   useEffect(() => {
     const fetchItem = async () => {
