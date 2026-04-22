@@ -1,7 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { useLocation } from "react-router-dom";
+import { useParams, useLocation, Link } from "react-router-dom";
 import { useParams, useLocation } from "react-router-dom";
 
 export default function MenuDetail() {
