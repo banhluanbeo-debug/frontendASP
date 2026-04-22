@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 export default function Menu() {
   const { tableId } = useParams();
@@ -10,6 +11,9 @@ export default function Menu() {
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
+  const query = new URLSearchParams(location.search);
+  const customerName = query.get("name");
   const API_URL = "https://two123110291-tranvanluan.onrender.com";
   useEffect(() => {
     const fetchData = async () => {
@@ -41,9 +45,9 @@ export default function Menu() {
       })
       .catch(() => {
         alert("Bàn không tồn tại 😑");
-        navigate("/menu");
+        navigate("/");
       });
-  }, [tableId]);
+  }, [tableId, navigate]);
   const getCategoryName = (categoryId) => {
     const cat = categories.find(c => c.categoryId === categoryId);
     return cat ? cat.categoryName : 'Danh mục chung';
@@ -92,7 +96,7 @@ export default function Menu() {
                 <Link
                   to={
                     tableId
-                      ? `/menu/${tableId}/item/${item.itemId}`
+                      ? `/menu/${tableId}/item/${item.itemId}?name=${customerName}`
                       : `/menu/item/${item.itemId}`
                   } key={item.itemId || index}
                   className={`bg-white rounded-2xl shadow-sm transition-all overflow-hidden border border-gray-100 block ${!item.isAvailable ? 'opacity-90 cursor-not-allowed' : 'cursor-pointer hover:shadow-xl group hover:-translate-y-1'}`}
