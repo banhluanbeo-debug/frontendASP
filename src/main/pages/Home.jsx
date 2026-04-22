@@ -93,13 +93,15 @@ export default function Home() {
                   <img
                     src={
                       item.imageUrl
-                        ? `${API_URL}${item.imageUrl}`
-                        : item.image || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&q=80"
+                        ? item.imageUrl   // ✅ dùng trực tiếp
+                        : item.image
+                          ? `${API_URL}${item.image}` // chỉ nối khi là local path
+                          : "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&q=80"
                     }
                     alt={item.name || item.itemName}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   />
-                  
+
                   {item.isFeatured && (
                     <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-bold text-orange-600 shadow-sm">
                       ★ Đề cử

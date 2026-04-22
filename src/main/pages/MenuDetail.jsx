@@ -100,7 +100,7 @@ export default function MenuDetail() {
           <img
             src={
               item.imageUrl
-                ? `${API_URL}${item.imageUrl}`
+                ? item.imageUrl   // ✅ dùng trực tiếp
                 : "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=1000&q=80"
             }
           />

@@ -219,10 +219,15 @@ export default function MenuItems() {
                       <div className="w-16 h-16 rounded-xl overflow-hidden shadow-sm bg-gray-100 border border-gray-200">
                         {item.imageUrl ? (
                           <img
-                            src={`https://two123110291-tranvanluan.onrender.com${item.imageUrl}`}
+                            src={
+                              item.imageUrl?.startsWith("http")
+                                ? item.imageUrl
+                                : `https://two123110291-tranvanluan.onrender.com${item.imageUrl}`
+                            }
                             alt={item.itemName}
                             className="w-full h-full object-cover"
-                          />) : (
+                          />
+                        ) : (
                           <div className="w-full h-full flex items-center justify-center text-xs text-gray-400">Trống</div>
                         )}
                       </div>

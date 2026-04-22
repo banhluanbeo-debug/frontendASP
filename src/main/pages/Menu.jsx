@@ -106,11 +106,16 @@ export default function Menu() {
                     <img
                       src={
                         item.imageUrl
-                          ? `${API_URL}${item.imageUrl}`
-                          : item.image || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&q=80"
+                          ? item.imageUrl   // ✅ dùng trực tiếp nếu là full URL
+                          : item.image
+                            ? `${API_URL}${item.image}` // chỉ ghép khi là local path
+                            : "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&q=80"
                       }
                       alt={item.itemName}
-                      className={`w-full h-full object-cover transition-transform duration-500 ${!item.isAvailable ? 'grayscale opacity-60' : 'group-hover:scale-110'}`}
+                      className={`w-full h-full object-cover transition-transform duration-500 ${!item.isAvailable
+                        ? "grayscale opacity-60"
+                        : "group-hover:scale-110"
+                        }`}
                     />
                     {!item.isAvailable && (
                       <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px] flex items-center justify-center">
