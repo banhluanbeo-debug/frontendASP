@@ -81,6 +81,28 @@ export default function Menu() {
 
     return () => clearInterval(interval);
   }, [tableId]);
+
+
+
+
+
+
+
+  ///xóa món đã gọi
+  const handleRemoveItem = async (item) => {
+    try {
+      const res = await fetch(
+        `${API_URL}/api/Order/remove-item?tableId=${tableId}&itemId=${item.itemId}`,
+        { method: "DELETE" }
+      );
+
+      if (res.ok) {
+        fetchOrders(); // reload lại
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
   return (
     <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 min-h-[70vh]">
       <div className="text-center mb-16">
@@ -192,9 +214,21 @@ export default function Menu() {
           <h3 className="font-bold mb-2 text-orange-600">Món đã gọi</h3>
 
           {orders.map((item, i) => (
-            <div key={i} className="text-sm flex justify-between">
-              <span>{item.itemName} x{item.quantity}</span>
-              <span>{(item.price * item.quantity).toLocaleString('vi-VN')}đ</span>
+            <div key={i} className="text-sm flex justify-between items-center">
+              <div>
+                <span>{item.itemName} x{item.quantity}</span>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span>{(item.price * item.quantity).toLocaleString('vi-VN')}đ</span>
+
+                <button
+                  onClick={() => handleRemoveItem(item)}
+                  className="text-red-500 hover:text-red-700 font-bold"
+                >
+                  ✕
+                </button>
+              </div>
             </div>
           ))}
         </div>
