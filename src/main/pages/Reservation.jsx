@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import QRCode from "qrcode";
 
 export default function Reservation() {
   const [tables, setTables] = useState([]);
@@ -19,6 +20,8 @@ export default function Reservation() {
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [paymentTotal, setPaymentTotal] = useState(0);
+  const [qrUrl, setQrUrl] = useState("");
+  const [qrImage, setQrImage] = useState("");
   const API_URL = "https://two123110291-tranvanluan.onrender.com";
   const fetchTables = async () => {
     try {
@@ -52,13 +55,12 @@ export default function Reservation() {
   useEffect(() => {
     fetchTables();
   }, []);
+  useEffect(() => {
+    if (qrUrl) {
+      QRCode.toDataURL(qrUrl).then(setQrImage);
+    }
+  }, [qrUrl]);
 
-  const handleOpenBookingModal = (table) => {
-    if (table.status?.toLowerCase() === 'occupied') return;
-    setSelectedTable(table);
-    setNumPeople(1);
-    setCustomerName("");
-  };
 
   const handleConfirmBooking = async () => {
     if (!selectedTable) return;
@@ -81,9 +83,12 @@ export default function Reservation() {
       );
       if (res.ok) {
         await fetchTables();
-        setTimeout(() => {
-          navigate(`/menu/${selectedTable.tableId}`);
-        }, 800);
+
+        const url = `https://frontend-asp-delta.vercel.app/menu/${selectedTable.tableId}?name=${encodeURIComponent(customerName)}`;
+        setQrUrl(url);
+        // setTimeout(() => {
+        //   navigate(`/menu/${selectedTable.tableId}`);
+        // }, 800);
       } else {
         let errorText = await res.text();
         alert("Server lỗi: " + errorText);
@@ -92,10 +97,17 @@ export default function Reservation() {
       alert("Không thể kết nối đến máy chủ.");
     } finally {
       setBookingLoading(false);
-      setSelectedTable(null);
+      // setSelectedTable(null);
     }
   };
-
+  const handleOpenBookingModal = (table) => {
+    if (table.status?.toLowerCase() === 'occupied') return;
+    setSelectedTable(table);
+    setNumPeople(1);
+    setCustomerName("");
+    setQrUrl("");
+    setQrImage("");
+  };
   // Mở modal thanh toán: fetch orders của bàn rồi hiện bill
   const handleOpenPayment = async (table) => {
     setPaymentTable(table);
@@ -261,6 +273,12 @@ export default function Reservation() {
             </div>
 
             <div className="p-8">
+              {qrImage && !bookingLoading && (
+                <div className="text-center mt-6">
+                  <p className="mb-2 font-bold text-orange-600">Quét để gọi món</p>
+                  <img src={qrImage} className="mx-auto w-40" />
+                </div>
+              )}
               <div className="mb-8">
                 <div className="mb-6">
                   <label className="block text-sm font-bold text-gray-400 uppercase tracking-widest mb-2">Tên khách</label>
