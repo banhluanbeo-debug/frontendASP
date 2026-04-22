@@ -2,6 +2,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useLocation } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
+
 export default function MenuDetail() {
   // const { id } = useParams();
   const [item, setItem] = useState(null);
@@ -9,6 +11,11 @@ export default function MenuDetail() {
   const [quantity, setQuantity] = useState(1);
   const [ordering, setOrdering] = useState(false);
   const { tableId, id } = useParams();
+  const { tableId } = useParams();
+  const location = useLocation();
+
+  const query = new URLSearchParams(location.search);
+  const customerName = query.get("name");
   const API_URL = "https://two123110291-tranvanluan.onrender.com";
   useEffect(() => {
     const fetchItem = async () => {
@@ -67,7 +74,10 @@ export default function MenuDetail() {
       <div className="max-w-7xl mx-auto py-32 px-4 text-center min-h-[70vh] flex flex-col items-center justify-center">
         <h2 className="text-4xl font-extrabold text-gray-900 mb-6">Món ăn không tồn tại 😢</h2>
         <p className="text-gray-500 text-lg mb-8">Có vẻ như món ăn này đã được dỡ khỏi thực đơn hoặc bị xóa.</p>
-        <Link to="/menu" className="bg-orange-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-orange-700 transition-all shadow-lg shadow-orange-500/30">
+        <Link
+          to={`/menu/${tableId}?name=${customerName}`}
+          className="bg-orange-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-orange-700 transition-all shadow-lg shadow-orange-500/30"
+        >
           ← Quay lại Thực đơn
         </Link>
       </div>
