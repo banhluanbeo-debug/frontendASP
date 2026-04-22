@@ -14,6 +14,7 @@ export default function Menu() {
   const location = useLocation();
   const query = new URLSearchParams(location.search);
   const customerName = query.get("name");
+  const [orders, setOrders] = useState([]);
   const API_URL = "https://two123110291-tranvanluan.onrender.com";
   useEffect(() => {
     const fetchData = async () => {
@@ -57,6 +58,29 @@ export default function Menu() {
     ? menuItems.filter(item => item.categoryId === activeCategory)
     : menuItems;
 
+
+
+
+  const fetchOrders = async () => {
+    if (!tableId) return;
+
+    try {
+      const res = await fetch(`${API_URL}/api/table/${tableId}/orders`);
+      const data = await res.json();
+      setOrders(data);
+    } catch (err) {
+      console.error("Lỗi load order:", err);
+    }
+  };
+  useEffect(() => {
+    if (!tableId) return;
+
+    const interval = setInterval(() => {
+      fetchOrders();
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [tableId]);
   return (
     <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 min-h-[70vh]">
       <div className="text-center mb-16">
@@ -161,6 +185,19 @@ export default function Menu() {
             </div>
           )}
         </>
+
+      )}
+      {orders.length > 0 && (
+        <div className="fixed bottom-4 right-4 bg-white p-4 rounded-xl shadow-xl w-64 z-50">
+          <h3 className="font-bold mb-2 text-orange-600">Món đã gọi</h3>
+
+          {orders.map((item, i) => (
+            <div key={i} className="text-sm flex justify-between">
+              <span>{item.itemName} x{item.quantity}</span>
+              <span>{(item.price * item.quantity).toLocaleString('vi-VN')}đ</span>
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );

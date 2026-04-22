@@ -23,6 +23,7 @@ export default function Reservation() {
   const [qrUrl, setQrUrl] = useState("");
   const [qrImage, setQrImage] = useState("");
   const API_URL = "https://two123110291-tranvanluan.onrender.com";
+
   const fetchTables = async () => {
     try {
       setLoading(true);
@@ -86,7 +87,9 @@ export default function Reservation() {
 
         const url = `https://frontend-asp-delta.vercel.app/menu/${selectedTable.tableId}?name=${encodeURIComponent(customerName)}`;
         setQrUrl(url);
-        // setTimeout(() => {
+
+        // 💥 thêm dòng này
+        localStorage.setItem(`qr_${selectedTable.tableId}`, url);        // setTimeout(() => {
         //   navigate(`/menu/${selectedTable.tableId}`);
         // }, 800);
       } else {
@@ -110,6 +113,16 @@ export default function Reservation() {
   };
   // Mở modal thanh toán: fetch orders của bàn rồi hiện bill
   const handleOpenPayment = async (table) => {
+    const savedQr = localStorage.getItem(`qr_${table.tableId}`);
+
+    if (savedQr) {
+      setQrUrl(savedQr);
+    } else if (table.customerName) {
+      // 👉 fallback nếu chưa có localStorage
+      const fallbackUrl = `https://frontend-asp-delta.vercel.app/menu/${table.tableId}?name=${encodeURIComponent(table.customerName)}`;
+      setQrUrl(fallbackUrl);
+    }
+
     setPaymentTable(table);
     setPaymentSuccess(false);
     setPaymentLoading(false);
@@ -141,6 +154,7 @@ export default function Reservation() {
         const data = await res.json();
         setPaymentTotal(data.total);
         setPaymentSuccess(true);
+        localStorage.removeItem(`qr_${paymentTable.tableId}`);
         // Cập nhật lại danh sách bàn
         await fetchTables();
         // Xóa cache orders của bàn đó
