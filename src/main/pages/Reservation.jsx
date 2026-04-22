@@ -274,11 +274,11 @@ export default function Reservation() {
 
             <div className="p-8">
               {qrImage && !bookingLoading && (
-                <div className="text-center mt-6">
-                  <p className="mb-2 font-bold text-orange-600">Quét để gọi món</p>
-                  <img src={qrImage} className="mx-auto w-40" />
-                </div>
-              )}
+  <div className="text-center mt-6">
+    <p className="mb-2 font-bold text-orange-600">Quét để gọi món</p>
+    <img src={qrImage} className="mx-auto w-40" />
+  </div>
+)}
               <div className="mb-8">
                 <div className="mb-6">
                   <label className="block text-sm font-bold text-gray-400 uppercase tracking-widest mb-2">Tên khách</label>
