@@ -85,7 +85,7 @@ export default function MenuDetail() {
     <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 min-h-[75vh]">
       <div className="mb-8">
         <Link
-          to="/menu"
+          to={`/menu/${tableId}?name=${customerName}`}
           className="text-gray-500 hover:text-orange-600 font-bold flex items-center gap-2 transition-colors w-max uppercase tracking-wider text-sm bg-gray-50 px-4 py-2 rounded-full border border-gray-200 shadow-sm"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
