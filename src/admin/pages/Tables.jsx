@@ -6,6 +6,9 @@ export default function Tables() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingTable, setEditingTable] = useState(null);
   const [formData, setFormData] = useState({ tableCode: '', capacity: 4, status: 'Empty' });
+  const [selectedTable, setSelectedTable] = useState(null);
+  const [tableOrders, setTableOrders] = useState([]);
+  const [orderLoading, setOrderLoading] = useState(false);
   const API_URL = "https://two123110291-tranvanluan.onrender.com";
   const fetchTables = async () => {
     try {
@@ -130,6 +133,23 @@ export default function Tables() {
     empty: tables.filter(t => t.status?.toLowerCase() !== 'occupied').length
   };
 
+
+  const handleViewOrders = async (table) => {
+    setSelectedTable(table);
+    setOrderLoading(true);
+
+    try {
+      const res = await fetch(`${API_URL}/api/table/${table.tableId}/orders`);
+      const data = await res.json();
+      setTableOrders(data);
+    } catch (error) {
+      console.error("Lỗi load món:", error);
+      setTableOrders([]);
+    } finally {
+      setOrderLoading(false);
+    }
+  };
+
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       {/* Stats Header */}
@@ -191,7 +211,11 @@ export default function Tables() {
               {tables.map(table => {
                 const isOccupied = table.status?.toLowerCase() === 'occupied';
                 return (
-                  <div key={table.tableId} className="group relative bg-white border border-gray-100 rounded-3xl p-6 hover:shadow-xl hover:border-orange-200 transition-all">
+                  // <div key={table.tableId} className="group relative bg-white border border-gray-100 rounded-3xl p-6 hover:shadow-xl hover:border-orange-200 transition-all">
+                  <div
+                    key={table.tableId}
+                    onClick={() => handleViewOrders(table)}
+                    className="group relative bg-white border border-gray-100 rounded-3xl p-6 hover:shadow-xl hover:border-orange-200 transition-all cursor-pointer"  >
                     <div className="flex justify-between items-start mb-4">
                       <div className={`w-14 h-14 rounded-2xl flex items-center justify-center font-black text-2xl shadow-inner ${isOccupied ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}`}>
                         {table.tableCode}
@@ -265,6 +289,38 @@ export default function Tables() {
       </div>
 
       {/* Modal Add/Edit */}
+      {selectedTable && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white rounded-3xl p-6 w-[400px] max-h-[80vh] overflow-auto">
+
+            <h2 className="text-xl font-bold mb-4">
+              Bàn {selectedTable.tableCode}
+            </h2>
+
+            {orderLoading ? (
+              <p>Đang tải món...</p>
+            ) : tableOrders.length === 0 ? (
+              <p>Chưa có món nào</p>
+            ) : (
+              <ul className="space-y-2">
+                {tableOrders.map((item, index) => (
+                  <li key={index} className="flex justify-between border-b pb-1">
+                    <span>{item.itemName}</span>
+                    <span>x{item.quantity}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            <button
+              onClick={() => setSelectedTable(null)}
+              className="mt-4 w-full bg-orange-600 text-white py-2 rounded-xl"
+            >
+              Đóng
+            </button>
+          </div>
+        </div>
+      )}
       {
         modalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm animate-in fade-in duration-200">
