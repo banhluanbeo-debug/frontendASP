@@ -17,7 +17,7 @@ export default function MenuItems() {
     imageUrl: ''
   });
   // const [imageFile, setImageFile] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
+  // const [imagePreview, setImagePreview] = useState(null);
   const API_URL = "https://two123110291-tranvanluan.onrender.com";
   const fetchData = async () => {
     setLoading(true);
@@ -46,7 +46,7 @@ export default function MenuItems() {
 
   const handleOpenModal = (mode, item = null) => {
     setModalMode(mode);
-    setImageFile(null);
+    // setImageFile(null);
     if (item) {
       setCurrentItem({ ...item, imageUrl: item.imageUrl || '' });
       setImagePreview(item.imageUrl || null);
@@ -352,11 +352,11 @@ export default function MenuItems() {
                       <img src={currentItem.imageUrl} className="w-full h-full object-cover" />
                     </div>
                   )}
-                  {imagePreview && (
+                  {/* {imagePreview && (
                     <div className="mt-3 w-32 h-32 rounded-xl overflow-hidden border border-gray-200 bg-gray-100">
                       <img src={imagePreview} alt="preview" className="w-full h-full object-cover" />
                     </div>
-                  )}
+                  )} */}
                 </div>
 
                 <div className="col-span-2 flex items-center p-4 bg-gray-50 rounded-xl border border-gray-200">
