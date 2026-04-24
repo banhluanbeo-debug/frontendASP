@@ -133,7 +133,7 @@ export default function MenuItems() {
     e.preventDefault();
 
     try {
-      // const formData = new FormData();
+      const formData = new FormData();
 
       // 🔥 Validate trước khi gửi
       if (!currentItem.itemName) {
@@ -161,11 +161,11 @@ export default function MenuItems() {
       };
 
       // 🔥 Append dữ liệu
-      // formData.append('ItemName', currentItem.itemName);
-      // formData.append('Price', String(currentItem.price));
-      // formData.append('CategoryId', String(currentItem.categoryId));
-      // formData.append('Description', currentItem.description || '');
-      // formData.append('IsAvailable', currentItem.isAvailable ? "true" : "false");
+      formData.append('ItemName', currentItem.itemName);
+      formData.append('Price', String(currentItem.price));
+      formData.append('CategoryId', String(currentItem.categoryId));
+      formData.append('Description', currentItem.description || '');
+      formData.append('IsAvailable', currentItem.isAvailable ? "true" : "false");
 
       // if (imageFile) {
       //   formData.append('image', imageFile);
