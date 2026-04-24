@@ -49,7 +49,7 @@ export default function MenuItems() {
     // setImageFile(null);
     if (item) {
       setCurrentItem({ ...item, imageUrl: item.imageUrl || '' });
-      setImagePreview(item.imageUrl || null);
+      // setImagePreview(item.imageUrl || null);
     } else {
       setCurrentItem({
         itemName: '',
@@ -59,7 +59,7 @@ export default function MenuItems() {
         isAvailable: true,
         imageUrl: ''
       });
-      setImagePreview(null);
+      // setImagePreview(null);
     }
     setIsModalOpen(true);
   };
