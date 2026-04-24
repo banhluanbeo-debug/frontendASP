@@ -171,7 +171,7 @@ export default function MenuItems() {
       //   formData.append('image', imageFile);
       // }
 
-      // formData.append('ImageUrl', currentItem.imageUrl || '');
+      formData.append('ImageUrl', currentItem.imageUrl || '');
 
       // 🔥 LOG để debug
       // console.log("==== FORM DATA ====");
