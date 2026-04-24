@@ -19,6 +19,22 @@ export default function MenuItems() {
   // const [imageFile, setImageFile] = useState(null);
   // const [imagePreview, setImagePreview] = useState(null);
   const API_URL = "https://two123110291-tranvanluan.onrender.com";
+  // const fetchData = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const [itemsRes, catsRes] = await Promise.all([
+  //       fetch(`${API_URL}/api/MenuItem`),
+  //       fetch(`${API_URL}/api/Category`)
+  //     ]);
+  //     if (itemsRes.ok) setItems(await itemsRes.json());
+  //     if (catsRes.ok) setCategories(await catsRes.json());
+  //   } catch (error) {
+  //     console.error('Lỗi khi fetch data:', error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -26,8 +42,33 @@ export default function MenuItems() {
         fetch(`${API_URL}/api/MenuItem`),
         fetch(`${API_URL}/api/Category`)
       ]);
-      if (itemsRes.ok) setItems(await itemsRes.json());
-      if (catsRes.ok) setCategories(await catsRes.json());
+
+      // 👉 xử lý items
+      if (itemsRes.ok) {
+        const text = await itemsRes.text();
+        console.log("ITEM RAW:", text);
+
+        try {
+          const data = JSON.parse(text);
+          setItems(data);
+        } catch (err) {
+          console.error("❌ JSON lỗi MenuItem:", text);
+        }
+      }
+
+      // 👉 xử lý categories
+      if (catsRes.ok) {
+        const text = await catsRes.text();
+        console.log("CAT RAW:", text);
+
+        try {
+          const data = JSON.parse(text);
+          setCategories(data);
+        } catch (err) {
+          console.error("❌ JSON lỗi Category:", text);
+        }
+      }
+
     } catch (error) {
       console.error('Lỗi khi fetch data:', error);
     } finally {
