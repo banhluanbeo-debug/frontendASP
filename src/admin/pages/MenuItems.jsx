@@ -16,7 +16,7 @@ export default function MenuItems() {
     isAvailable: true,
     imageUrl: ''
   });
-  const [imageFile, setImageFile] = useState(null);
+  // const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const API_URL = "https://two123110291-tranvanluan.onrender.com";
   const fetchData = async () => {
@@ -68,14 +68,14 @@ export default function MenuItems() {
     setIsModalOpen(false);
   };
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setImageFile(file);
-      const url = URL.createObjectURL(file);
-      setImagePreview(url);
-    }
-  };
+  // const handleImageChange = (e) => {
+  //   const file = e.target.files[0];
+  //   if (file) {
+  //     setImageFile(file);
+  //     const url = URL.createObjectURL(file);
+  //     setImagePreview(url);
+  //   }
+  // };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -117,9 +117,11 @@ export default function MenuItems() {
       formData.append('Description', currentItem.description || '');
       formData.append('IsAvailable', currentItem.isAvailable ? "true" : "false");
 
-      if (imageFile) {
-        formData.append('image', imageFile);
-      }
+      // if (imageFile) {
+      //   formData.append('image', imageFile);
+      // }
+
+      formData.append('ImageUrl', currentItem.imageUrl || '');
 
       // 🔥 LOG để debug
       console.log("==== FORM DATA ====");
@@ -332,12 +334,24 @@ export default function MenuItems() {
                 </div>
 
                 <div className="col-span-2">
-                  <label className="block text-sm font-bold text-gray-700 mb-2">Tải ảnh lên</label>
+                  <label className="block text-sm font-bold text-gray-700 mb-2">
+                    Link ảnh (Cloudinary)
+                  </label>
+
                   <input
-                    type="file" accept="image/*" disabled={modalMode === 'view'}
-                    onChange={handleImageChange}
-                    className="w-full px-4 py-2 rounded-xl bg-gray-50 border border-gray-200 focus:bg-white focus:ring-2 focus:ring-orange-500 outline-none transition-all file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100"
+                    type="text"
+                    name="imageUrl"
+                    value={currentItem.imageUrl || ''}
+                    onChange={handleChange}
+                    placeholder="https://res.cloudinary.com/..."
+                    className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:bg-white focus:ring-2 focus:ring-orange-500"
                   />
+
+                  {currentItem.imageUrl && (
+                    <div className="mt-3 w-32 h-32 rounded-xl overflow-hidden border">
+                      <img src={currentItem.imageUrl} className="w-full h-full object-cover" />
+                    </div>
+                  )}
                   {imagePreview && (
                     <div className="mt-3 w-32 h-32 rounded-xl overflow-hidden border border-gray-200 bg-gray-100">
                       <img src={imagePreview} alt="preview" className="w-full h-full object-cover" />
