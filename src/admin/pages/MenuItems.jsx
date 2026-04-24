@@ -133,7 +133,7 @@ export default function MenuItems() {
     e.preventDefault();
 
     try {
-      const formData = new FormData();
+      // const formData = new FormData();
 
       // 🔥 Validate trước khi gửi
       if (!currentItem.itemName) {
@@ -151,24 +151,33 @@ export default function MenuItems() {
         return;
       }
 
+      const body = {
+        itemName: currentItem.itemName,
+        price: currentItem.price,
+        categoryId: currentItem.categoryId,
+        description: currentItem.description,
+        isAvailable: currentItem.isAvailable,
+        imageUrl: currentItem.imageUrl
+      };
+
       // 🔥 Append dữ liệu
-      formData.append('ItemName', currentItem.itemName);
-      formData.append('Price', String(currentItem.price));
-      formData.append('CategoryId', String(currentItem.categoryId));
-      formData.append('Description', currentItem.description || '');
-      formData.append('IsAvailable', currentItem.isAvailable ? "true" : "false");
+      // formData.append('ItemName', currentItem.itemName);
+      // formData.append('Price', String(currentItem.price));
+      // formData.append('CategoryId', String(currentItem.categoryId));
+      // formData.append('Description', currentItem.description || '');
+      // formData.append('IsAvailable', currentItem.isAvailable ? "true" : "false");
 
       // if (imageFile) {
       //   formData.append('image', imageFile);
       // }
 
-      formData.append('ImageUrl', currentItem.imageUrl || '');
+      // formData.append('ImageUrl', currentItem.imageUrl || '');
 
       // 🔥 LOG để debug
-      console.log("==== FORM DATA ====");
-      for (let pair of formData.entries()) {
-        console.log(pair[0] + ": ", pair[1]);
-      }
+      // console.log("==== FORM DATA ====");
+      // for (let pair of formData.entries()) {
+      //   console.log(pair[0] + ": ", pair[1]);
+      // }
 
       let res;
 
@@ -180,7 +189,8 @@ export default function MenuItems() {
       } else {
         res = await fetch(`${API_URL}/api/MenuItem/${currentItem.itemId}`, {
           method: 'PUT',
-          body: formData
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body)
         });
       }
 
